@@ -43,6 +43,8 @@ class FaceTracker(object):
 
 
     def update(self, image):
+        if image is None:
+            return
         self._faces = []
         if utils.is_gray_image(image):
             image = cv2.equalizeHist(image)

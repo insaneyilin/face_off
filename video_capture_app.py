@@ -13,14 +13,15 @@ from face_tracker import FaceTracker
 
 class VideoCaptureApp(object):
 
-    def __init__(self, face_img_path=None, should_mirror=False):
+    def __init__(self, capture=None, face_img_path=None, should_mirror=False):
         self._window_manager = WindowManager(self.on_keypress)
-        self._capture_manager = CaptureManager(cv2.VideoCapture(0))
+        self._capture_manager = CaptureManager(cv2.VideoCapture(0)) \
+                if capture is None else CaptureManager(capture)
         self._window_name = 'FaceOff'
         self._should_mirror = should_mirror
         self._face_tracker = FaceTracker()
-        self._show_face_rect = True
-        self._swap_face = False
+        self._show_face_rect = False
+        self._swap_face = True
         self._template_face = None
         if face_img_path is not None:
             self._template_face = cv2.imread(face_img_path)
@@ -31,6 +32,9 @@ class VideoCaptureApp(object):
         while self._window_manager.is_window_created(self._window_name):
             self._capture_manager.enter_frame()
             frame = self._capture_manager.frame
+            if frame is None:
+                print "get None frame!"
+                break
 
             # process frame
             # detect face
@@ -51,7 +55,15 @@ class VideoCaptureApp(object):
                 x, y, w, h = face_rect
                 template_face = self._template_face.copy()
                 template_face = cv2.resize(template_face, (w,h))
-                frame[y:y+h,x:x+w] = template_face
+                # simply paste
+                # frame[y:y+h,x:x+w] = template_face
+                # or use seamless clone
+                mask = 255 * np.ones(template_face.shape, template_face.dtype)
+                center = (x+w/2,y+h/2)
+                frame = cv2.seamlessClone(template_face, frame, mask, center, \
+                        cv2.MIXED_CLONE)
+                # frame = cv2.seamlessClone(template_face, frame, mask, center, \
+                #         cv2.NORMAL_CLONE)
 
             # show frame window
             if self._should_mirror:
