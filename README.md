@@ -20,4 +20,4 @@ The video processing framework refers to the book (OpenCV Computer Vision with P
 
 ## Screenshots
 
-![](https://github.com/insaneyilin/document_scanner/blob/master/screenshots/auto_detect.gif)
+![](https://github.com/insaneyilin/face_off/blob/master/screenshots/david_demo.gif)
