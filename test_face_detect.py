@@ -13,11 +13,15 @@ img = cv2.imread('data/images/lena.jpg')
 facetracker.update(img)
 
 img_face = img.copy()
+img_cropped = None
 for face in facetracker.faces:
     print face.face_rect
     x, y, w, h = face.face_rect
+    img_cropped = img_face[y:y+h,x:x+w].copy()
     cv2.rectangle(img_face, (x,y), (x+w,y+h), (0,255,0), 2)
+    break
 
 cv2.imshow('image', img)
 cv2.imshow('image_face', img_face)
+cv2.imshow('image cropped', img_cropped)
 cv2.waitKey()
